@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Art Explorer</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src = "https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
+</head>
+
+<body>
+
+<header>
+    <h1>Art Explorer</h1>
+
+    <nav>
+        <a href ="/">Home</a>
+        <a href = "collections.html">My Collections</a>
+        <a href = "about.html"> About</a>
+    </nav>
+
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>How to Use Art Explorer</h2>
+
+        <p>
+            Search for artwork using keywords such as
+            "cats", "flowers", "ancient", or "paintings".
+        </p>
+
+        <p>
+            Browse artwork results, view department
+            statistics, and save your favorite pieces
+            to your personal collection.
+        </p>
+
+    </div>
+
+<div class="container">
+    <div class="swiper">
+
+    <div
+        class="swiper-wrapper"
+        id="swiperWrapper"
+    ></div>
+
+    <div class="swiper-pagination"></div>
+
+</div>
+
+    </div>
+    <div class="search-section">
+        <input 
+            type="text"
+            id="searchInput"
+            placeholder="Search artwork..."
+        >
+
+        <button onclick="searchArtworks()">
+            Search 
+        </button>
+
+    </div>
+
+    <canvas id="departmentChart"></canvas>
+    <div class="gallery" id="gallery"></div>
+
+</div>
+
+<script src = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
