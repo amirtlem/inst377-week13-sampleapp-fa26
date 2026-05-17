@@ -9,6 +9,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use('/public', express.static('public'));
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
