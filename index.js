@@ -1,140 +1,166 @@
 const express = require('express');
+const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
+const path = require('path');
 const dotenv = require('dotenv');
 const { createClient } = require('@supabase/supabase-js');
+
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
-app.use('/public', express.static('public'));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
 
+
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+app.get('/collections.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'collections.html'));
+});
+
+app.get('/about.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+
 
 app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.q;
 
-    const searchResponse = await fetch (
-       `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&artistOrCulture=true&q=${query}`
+    const searchResponse = await fetch(
+      `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${query}&hasImages=true`
     );
+
     const searchData = await searchResponse.json();
 
-    const objectIDs = searchData.objectIDs
-    ? searchData.objectIDs.slice(0,12)
-    : [];
+    if (!searchData.objectIDs) {
+      return res.json([]);
+    }
+
+    const objectIds = searchData.objectIDs.slice(0, 12);
 
     const artworks = await Promise.all(
-      objectIDs.map(async (id) => {
-
-        const response = await fetch(
-            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+      objectIds.map(async (id) => {
+        const artworkResponse = await fetch(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
         );
-        return response.json();
+
+        return artworkResponse.json();
       })
     );
 
-     res.json(artworks);
+    res.json(artworks);
 
   } catch (error) {
-
-    console.log(error);
-
+    console.error(error);
     res.status(500).json({
-      error: 'Search failed'
-    });
-  }
-});
-
-
-app.get('/api/departments', async (req, res) => {
-  try {
-
-    const response = await fetch(
-      'https://collectionapi.metmuseum.org/public/collection/v1/departments'
-    );
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Failed to fetch departments'
+      error: 'Failed to fetch artwork'
     });
   }
 });
 
 
 app.get('/api/collections', async (req, res) => {
-  const { data, error } = await supabase
-    .from('collections')
-    .select();
+  try {
+    const { data, error } = await supabase
+      .from('collections')
+      .select('*');
 
     if (error) {
-      res.status(500).json(error);
-
-    } else {
-      res.json(data);
+      throw error;
     }
-  });
+
+    res.json(data);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'Failed to fetch collections'
+    });
+  }
+});
+
 
 app.post('/api/collections', async (req, res) => {
-  const {
-    object_id,
-    title,
-    artist,
-    image,
-    category,
-    notes
-  } = req.body;
+  try {
 
-  const { data, error} = await supabase
-    .from('collections')
-    .insert([
-      {
-        object_id,
-        title,
-        artist,
-        image,
-        category,
-        notes
-      }
-    ])
-    .select();
+    const {
+      object_id,
+      title,
+      artist,
+      image,
+      category,
+      notes
+    } = req.body;
+
+    const { data, error } = await supabase
+      .from('collections')
+      .insert([
+        {
+          object_id,
+          title,
+          artist,
+          image,
+          category,
+          notes
+        }
+      ]);
 
     if (error) {
-      res.status(500).json(error);
-    } else {
-      res.json(data);
+      throw error;
     }
-  });
 
-  app.delete('/api/collections/:id', async (req, res) => {
+    res.json({
+      message: 'Artwork saved successfully',
+      data
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'Failed to save artwork'
+    });
+  }
+});
+
+
+app.delete('/api/collections/:id', async (req, res) => {
+  try {
+
     const { id } = req.params;
 
-    const {error} = await supabase
+    const { error } = await supabase
       .from('collections')
       .delete()
       .eq('id', id);
 
-      if (error) {
-        res.status(500).json(error);
+    if (error) {
+      throw error;
+    }
 
-      } else {
-        res.json({
-          message: ' Artwork deleted succesfully'
-        });
-      }
+    res.json({
+      message: 'Artwork deleted successfully'
+    });
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'Failed to delete artwork'
     });
-    app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
