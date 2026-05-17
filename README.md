@@ -22,4 +22,8 @@ This application is designed for use on contemporary desktop browsers including
 
 The application was made primarily for desktop viewing. 
 
+## Developer Manual
+
+[View the Developer Manual](docs/developer-manual.md)
+
 
