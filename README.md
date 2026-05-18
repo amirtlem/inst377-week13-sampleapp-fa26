@@ -19,7 +19,7 @@ This application uses Supabase as a database and integrates multiple front-end l
 
 # Target Browsers
 
-This application is designed for use on contemporary desktop browsers including 
+This application is designed for use on desktop browsers including 
 - Google Chrome
 - Microsoft Edge
 - Safari
