@@ -1,5 +1,5 @@
 
-# Art Explorer
+# Art Explorer - Amira Tlemsani Final Project
 
 ## Vercel Link 
 [Art Explorer](https://inst377-week13-sampleapp-fa26-834jzlghn-amirtlems-projects.vercel.app/)
