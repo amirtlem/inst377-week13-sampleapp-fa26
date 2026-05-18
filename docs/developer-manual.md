@@ -15,7 +15,7 @@ The application was built using:
 
 ## Clone Repository 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_LINK
+git clone your_repo_link
 ```
 
 ## Install Dependencies
