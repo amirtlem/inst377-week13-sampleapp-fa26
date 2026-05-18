@@ -19,7 +19,7 @@ git clone YOUR_GITHUB_REPOSITORY_LINK
 ```
 
 ## Install Dependencies
-``bash
+```bash
 npm install
 ```
 
@@ -94,6 +94,8 @@ Testing was completed manually through:
 - browser testing
 - API endpoint testing
 - database testing
+
+No automated testing was implemented. 
 
 # Known Bugs
 
